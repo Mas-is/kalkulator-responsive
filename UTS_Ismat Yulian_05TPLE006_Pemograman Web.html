@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kalkulator Responsif</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background:#e5e5e5;
+      padding:20px;
+      transition:0.3s;
+    }
+
+    body.dark{
+      background:#1f1f1f;
+    }
+
+    .calculator{
+      width:100%;
+      max-width:370px;
+      background:#f4f6f8;
+      border-radius:35px;
+      overflow:hidden;
+      box-shadow:0 15px 35px rgba(0,0,0,0.25);
+      transition:0.3s;
+    }
+
+    body.dark .calculator{
+      background:#333;
+    }
+
+    /* IDENTITAS */
+    .student-info{
+      padding:18px 22px;
+      background:#ffffff;
+      color:#333;
+      border-bottom:1px solid #ddd;
+      line-height:1.7;
+      font-size:14px;
+      font-weight:500;
+    }
+
+    body.dark .student-info{
+      background:#2b2b2b;
+      color:#f1f1f1;
+      border-bottom:1px solid #444;
+    }
+
+    /* DISPLAY */
+    .display{
+      min-height:180px;
+      padding:35px 25px 25px;
+      text-align:right;
+      color:white;
+      background:linear-gradient(135deg,#f7b733,#fc4a9f);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      word-break:break-word;
+    }
+
+    body.dark .display{
+      background:linear-gradient(135deg,#111,#444);
+    }
+
+    .expression{
+      font-size:clamp(28px,8vw,42px);
+      font-weight:700;
+      min-height:55px;
+    }
+
+    .result{
+      margin-top:10px;
+      font-size:clamp(18px,5vw,24px);
+      opacity:0.9;
+    }
+
+    /* MODE */
+    .mode-area{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:14px 22px;
+      border-bottom:1px solid #ddd;
+    }
+
+    body.dark .mode-area{
+      border-bottom:1px solid #444;
+    }
+
+    .mode-area span{
+      color:#666;
+      font-size:14px;
+    }
+
+    body.dark .mode-area span{
+      color:#ccc;
+    }
+
+    .theme-toggle{
+      width:48px;
+      height:30px;
+      border:none;
+      border-radius:30px;
+      background:#fff;
+      color:#333;
+      cursor:pointer;
+      font-size:15px;
+      transition:0.2s;
+    }
+
+    body.dark .theme-toggle{
+      background:#222;
+      color:white;
+    }
+
+    /* BUTTONS */
+    .buttons{
+      padding:22px;
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+    }
+
+    button{
+      aspect-ratio:1/1;
+      border:none;
+      border-radius:20px;
+      background:#fff;
+      color:#444;
+      font-size:clamp(18px,5vw,24px);
+      cursor:pointer;
+      transition:0.15s;
+      box-shadow:
+      5px 5px 12px rgba(0,0,0,0.10),
+      -5px -5px 12px rgba(255,255,255,0.85);
+    }
+
+    button:hover{
+      transform:translateY(-2px);
+    }
+
+    button:active{
+      transform:scale(0.95);
+    }
+
+    body.dark button{
+      background:#2a2a2a;
+      color:#f0f0f0;
+      box-shadow:
+      4px 4px 10px rgba(0,0,0,0.35),
+      -2px -2px 6px rgba(255,255,255,0.03);
+    }
+
+    .operator{
+      background:#ececec;
+      font-weight:700;
+    }
+
+    body.dark .operator{
+      background:#404040;
+    }
+
+    .clear{
+      color:#ff4f7b;
+      font-weight:700;
+    }
+
+    .equal{
+      color:white;
+      font-weight:700;
+      background:linear-gradient(135deg,#f7b733,#fc4a9f);
+    }
+
+    body.dark .equal{
+      background:linear-gradient(135deg,#111,#666);
+    }
+
+    .zero{
+      grid-column:span 2;
+      aspect-ratio:auto;
+    }
+
+    /* RESPONSIVE */
+    @media(max-width:480px){
+
+      body{
+        padding:14px;
+      }
+
+      .calculator{
+        border-radius:28px;
+      }
+
+      .display{
+        min-height:160px;
+        padding:28px 20px 22px;
+      }
+
+      .buttons{
+        padding:18px;
+        gap:12px;
+      }
+
+      button{
+        border-radius:16px;
+      }
+    }
+
+    @media(max-width:360px){
+
+      .buttons{
+        gap:10px;
+        padding:15px;
+      }
+
+      .student-info{
+        font-size:13px;
+      }
+
+      .mode-area{
+        padding:12px 18px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <main class="calculator">
+
+    <!-- IDENTITAS -->
+    <section class="student-info">
+      <p>Nama : Ismat Yulian</p>
+      <p>NIM : 231011450404</p>
+      <p>Kelas : 05TPLE006</p>
+    </section>
+
+    <!-- DISPLAY -->
+    <section class="display">
+      <div class="expression" id="expression">0</div>
+      <div class="result" id="result">0</div>
+    </section>
+
+    <!-- MODE -->
+    <section class="mode-area">
+      <span id="modeText">Light Mode</span>
+      <button class="theme-toggle" onclick="toggleTheme()">☾</button>
+    </section>
+
+    <!-- BUTTONS -->
+    <section class="buttons">
+
+      <button class="clear" onclick="clearDisplay()">AC</button>
+      <button onclick="deleteLast()">⌫</button>
+      <button class="operator" onclick="appendOperator('%')">%</button>
+      <button class="operator" onclick="appendOperator('/')">÷</button>
+
+      <button onclick="appendNumber('7')">7</button>
+      <button onclick="appendNumber('8')">8</button>
+      <button onclick="appendNumber('9')">9</button>
+      <button class="operator" onclick="appendOperator('*')">×</button>
+
+      <button onclick="appendNumber('4')">4</button>
+      <button onclick="appendNumber('5')">5</button>
+      <button onclick="appendNumber('6')">6</button>
+      <button class="operator" onclick="appendOperator('-')">−</button>
+
+      <button onclick="appendNumber('1')">1</button>
+      <button onclick="appendNumber('2')">2</button>
+      <button onclick="appendNumber('3')">3</button>
+      <button class="operator" onclick="appendOperator('+')">+</button>
+
+      <button class="zero" onclick="appendNumber('0')">0</button>
+      <button onclick="appendDecimal()">.</button>
+      <button class="equal" onclick="calculate()">=</button>
+
+    </section>
+
+  </main>
+
+  <script>
+
+    let expression = "";
+
+    const expressionDisplay = document.getElementById("expression");
+    const resultDisplay = document.getElementById("result");
+    const modeText = document.getElementById("modeText");
+
+    /* UPDATE DISPLAY */
+    function updateDisplay(){
+
+      expressionDisplay.textContent = expression || "0";
+
+      realtimeCalculate();
+    }
+
+    /* INPUT ANGKA */
+    function appendNumber(number){
+
+      expression += number;
+
+      updateDisplay();
+    }
+
+    /* INPUT DESIMAL */
+    function appendDecimal(){
+
+      const lastNumber =
+      expression.split(/[\+\-\*\/%]/).pop();
+
+      if(!lastNumber.includes(".")){
+
+        expression += ".";
+
+        updateDisplay();
+      }
+    }
+
+    /* INPUT OPERATOR */
+    function appendOperator(operator){
+
+      if(expression === ""){
+
+        alert("Input tidak boleh kosong!");
+
+        return;
+      }
+
+      const lastChar = expression.slice(-1);
+
+      const operators =
+      ["+","-","*","/","%"];
+
+      if(operators.includes(lastChar)){
+
+        expression =
+        expression.slice(0,-1) + operator;
+
+      }else{
+
+        expression += operator;
+      }
+
+      updateDisplay();
+    }
+
+    /* HITUNG REALTIME */
+    function realtimeCalculate(){
+
+      try{
+
+        const lastChar =
+        expression.slice(-1);
+
+        const operators =
+        ["+","-","*","/","%"];
+
+        if(
+          expression === "" ||
+          operators.includes(lastChar)
+        ){
+          resultDisplay.textContent = "0";
+          return;
+        }
+
+        const result =
+        Function('"use strict"; return (' + expression + ')')();
+
+        if(!isFinite(result)){
+
+          resultDisplay.textContent = "Tidak Valid";
+
+          return;
+        }
+
+        resultDisplay.textContent =
+        formatResult(result);
+
+      }catch{
+
+        resultDisplay.textContent = "Error";
+      }
+    }
+
+    /* TOMBOL = */
+    function calculate(){
+
+      if(expression.trim() === ""){
+
+        alert("Input tidak boleh kosong!");
+
+        return;
+      }
+
+      try{
+
+        const result =
+        Function('"use strict"; return (' + expression + ')')();
+
+        if(!isFinite(result)){
+
+          alert("Perhitungan tidak valid!");
+
+          return;
+        }
+
+        expression =
+        formatResult(result).toString();
+
+        expressionDisplay.textContent =
+        expression;
+
+        resultDisplay.textContent =
+        expression;
+
+      }catch{
+
+        alert("Input tidak valid!");
+      }
+    }
+
+    /* FORMAT HASIL */
+    function formatResult(value){
+
+      return Number.isInteger(value)
+      ? value
+      : parseFloat(value.toFixed(8));
+    }
+
+    /* CLEAR */
+    function clearDisplay(){
+
+      expression = "";
+
+      expressionDisplay.textContent = "0";
+
+      resultDisplay.textContent = "0";
+    }
+
+    /* DELETE */
+    function deleteLast(){
+
+      expression =
+      expression.slice(0,-1);
+
+      updateDisplay();
+    }
+
+    /* DARK MODE */
+    function toggleTheme(){
+
+      document.body.classList.toggle("dark");
+
+      if(document.body.classList.contains("dark")){
+
+        modeText.textContent = "Dark Mode";
+
+      }else{
+
+        modeText.textContent = "Light Mode";
+      }
+    }
+
+    /* KEYBOARD SUPPORT */
+    document.addEventListener("keydown", function(event){
+
+      const key = event.key;
+
+      if(!isNaN(key)){
+
+        appendNumber(key);
+
+      }else if(key === "."){
+
+        appendDecimal();
+
+      }else if(
+        ["+","-","*","/","%"].includes(key)
+      ){
+
+        appendOperator(key);
+
+      }else if(key === "Enter"){
+
+        calculate();
+
+      }else if(key === "Backspace"){
+
+        deleteLast();
+
+      }else if(key === "Escape"){
+
+        clearDisplay();
+      }
+    });
+
+  </script>
+
+</body>
+</html>
